@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import { useApi } from "@/lib/useApi";
-import type { CriticalityRow, EquipmentDetail as Detail, SharedPart } from "@/types";
+import type {
+  CriticalityRow,
+  EquipmentDetail as Detail,
+  SharedPart,
+} from "@/types";
 import { EquipmentList } from "@/components/EquipmentList";
 import { EquipmentDetail } from "@/components/EquipmentDetail";
 import { GraphPanel } from "@/components/GraphPanel";
@@ -43,7 +47,7 @@ export default function Home() {
           <h1 className="font-archivo text-xl font-bold tracking-tight text-slate-900 uppercase">
             Failtrace
           </h1>
-          <p className="max-w-[44ch] text-[13px] text-slate-500">
+          <p className="max-w-[50ch] text-[13px] text-slate-500">
             Trace how a single equipment failure spreads through a plant.
           </p>
         </div>
