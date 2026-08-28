@@ -1,19 +1,10 @@
 "use client";
 
-import { useApi } from "@/lib/useApi";
 import type { EquipmentDetail as Detail } from "@/types";
-import { Loading } from "./states/Loading";
 import { Empty } from "./states/Empty";
-import { ErrorState } from "./states/ErrorState";
 
-export function EquipmentDetail({ id }: { id: string }) {
-  const { state, reload } = useApi<Detail>(`/api/equipment/${id}`);
-
-  if (state.status === "loading") return <Loading rows={5} />;
-  if (state.status === "error")
-    return <ErrorState message={state.message} onRetry={reload} />;
-
-  const { equipment, downstream, parts, technicians } = state.data;
+export function EquipmentDetail({ detail }: { detail: Detail }) {
+  const { equipment, downstream, parts, technicians } = detail;
 
   return (
     <div className="space-y-8">

@@ -2,17 +2,29 @@
 
 import { useState } from "react";
 import { useApi } from "@/lib/useApi";
-import type { Equipment } from "@/types";
+import type { Equipment, EquipmentDetail as Detail } from "@/types";
 import { EquipmentList } from "@/components/EquipmentList";
 import { EquipmentDetail } from "@/components/EquipmentDetail";
+import { GraphPanel } from "@/components/GraphPanel";
 import { CriticalityTable } from "@/components/CriticalityTable";
 import { SharedParts } from "@/components/SharedParts";
 import { Loading } from "@/components/states/Loading";
 import { ErrorState } from "@/components/states/ErrorState";
 
 export default function Home() {
-  const { state, reload } = useApi<Equipment[]>("/api/equipment");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const equipmentApi = useApi<Equipment[]>("/api/equipment");
+  const feedsApi = useApi<[string, string][]>("/api/feeds");
+  const detailApi = useApi<Detail>(
+    selectedId ? `/api/equipment/${selectedId}` : null,
+  );
+
+  const equipment =
+    equipmentApi.state.status === "success" ? equipmentApi.state.data : [];
+  const feeds = feedsApi.state.status === "success" ? feedsApi.state.data : [];
+  const detail =
+    detailApi.state.status === "success" ? detailApi.state.data : null;
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
@@ -27,27 +39,51 @@ export default function Home() {
 
       <div className="grid gap-10 md:grid-cols-[260px_1fr]">
         <aside>
-          {state.status === "loading" && <Loading rows={6} />}
-          {state.status === "error" && (
-            <ErrorState message={state.message} onRetry={reload} />
+          {equipmentApi.state.status === "loading" && <Loading rows={6} />}
+          {equipmentApi.state.status === "error" && (
+            <ErrorState
+              message={equipmentApi.state.message}
+              onRetry={equipmentApi.reload}
+            />
           )}
-          {state.status === "success" && (
+          {equipmentApi.state.status === "success" && (
             <EquipmentList
-              equipment={state.data}
+              equipment={equipment}
               selectedId={selectedId}
               onSelect={setSelectedId}
             />
           )}
         </aside>
 
-        <section>
-          {selectedId ? (
-            <EquipmentDetail key={selectedId} id={selectedId} />
-          ) : (
-            <p className="pt-2 text-slate-500">
+        <section className="space-y-8">
+          {equipment.length > 0 && feeds.length > 0 && (
+            <GraphPanel
+              equipment={equipment}
+              feeds={feeds}
+              selectedId={selectedId}
+              downstream={detail?.downstream ?? []}
+              onSelect={setSelectedId}
+            />
+          )}
+
+          {!selectedId && (
+            <p className="text-slate-500">
               Select a machine to see what stops if it fails.
             </p>
           )}
+
+          {selectedId && detailApi.state.status === "loading" && (
+            <Loading rows={5} />
+          )}
+
+          {selectedId && detailApi.state.status === "error" && (
+            <ErrorState
+              message={detailApi.state.message}
+              onRetry={detailApi.reload}
+            />
+          )}
+
+          {selectedId && detail && <EquipmentDetail detail={detail} />}
         </section>
       </div>
 

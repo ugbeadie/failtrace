@@ -118,3 +118,11 @@ export async function getCriticality(): Promise<CriticalityRow[]> {
     impact: r.get("impact").toNumber(),
   }));
 }
+
+export async function getFeedEdges(): Promise<[string, string][]> {
+  const { records } = await getDriver().executeQuery(
+    `MATCH (a:Equipment)-[:FEEDS]->(b:Equipment)
+     RETURN a.id AS from, b.id AS to`,
+  );
+  return records.map((r) => [r.get("from"), r.get("to")]);
+}
