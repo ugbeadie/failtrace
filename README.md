@@ -229,6 +229,20 @@ Next.js (App Router) · TypeScript · Tailwind CSS · `neo4j-driver` over Bolt �
 
 CognoDB speaks openCypher over Bolt and works with the official Neo4j drivers, so no custom SDK is involved.
 
+## With more time
+
+**Write path.** A form to add equipment and connections, so the plant can be edited without re-seeding. The Cypher is a `MERGE` rather than a `CREATE`, so submitting twice is idempotent. This is first on the list because adding a machine visibly changes the criticality ranking and every blast radius that touches it — which demonstrates the traversal is computed live rather than baked into the seed data.
+
+**Redundancy modelling.** `FEEDS` currently means "if this stops, that stops." Real plants have standby paths — a backup generator, a duplicate pump. Modelling that would mean a property on the relationship (`redundant: true`) and a traversal that only propagates failure when _every_ incoming supply is down. That is a genuinely harder graph problem than the current one, and the most interesting extension here.
+
+**Cost of downtime.** Adding an hourly production value to each machine turns the criticality ranking from a count into a currency figure, which is the form a maintenance budget actually needs.
+
+**Precomputed criticality.** The ranking traverses from all 15 nodes on every request. That is fine at this size and would not be at ten thousand. It would become a periodic job writing an `impact` property onto each node, with the live query kept as the source of truth.
+
+**Path explanation.** The app reports that the case packer stops when the compressor fails, but not why. Returning the path itself — compressor → dryer → capper → labeller → packer — would make each answer self-explaining.
+
+**Tests.** The traversal queries have exact expected answers against the seed data: the generator reaches 14, the air compressor reaches 6, the capper is 2 hops from the dryer. That makes them straightforward to assert against a test instance.
+
 ## Known limitations
 
 - Read-only. Editing the plant means changing `scripts/data.ts` and re-seeding.
