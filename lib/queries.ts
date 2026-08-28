@@ -89,7 +89,7 @@ export async function getEquipmentDetail(
 export async function getSharedParts(): Promise<SharedPart[]> {
   const { records } = await getDriver().executeQuery(
     `MATCH (e:Equipment)-[:HAS_PART]->(p:Part)
-     WITH p, collect(e.name) AS machines
+     WITH p, collect({id: e.id, name: e.name}) AS machines
      WHERE size(machines) > 1
      RETURN p.id AS id, p.name AS name, machines, size(machines) AS machineCount
      ORDER BY machineCount DESC, p.name`,

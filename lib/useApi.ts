@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-type State<T> =
+export type State<T> =
   | { status: "loading" }
   | { status: "error"; message: string }
   | { status: "success"; data: T };

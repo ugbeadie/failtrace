@@ -26,7 +26,7 @@ export type EquipmentDetail = {
 
 export type SharedPart = Part & {
   machineCount: number;
-  machines: string[];
+  machines: { id: string; name: string }[];
 };
 
 export type CriticalityRow = Equipment & { impact: number };
