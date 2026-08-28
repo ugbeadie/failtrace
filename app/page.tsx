@@ -5,6 +5,8 @@ import { useApi } from "@/lib/useApi";
 import type { Equipment } from "@/types";
 import { EquipmentList } from "@/components/EquipmentList";
 import { EquipmentDetail } from "@/components/EquipmentDetail";
+import { CriticalityTable } from "@/components/CriticalityTable";
+import { SharedParts } from "@/components/SharedParts";
 import { Loading } from "@/components/states/Loading";
 import { ErrorState } from "@/components/states/ErrorState";
 
@@ -48,6 +50,26 @@ export default function Home() {
           )}
         </section>
       </div>
+
+      <section className="mt-14 border-t border-slate-200 pt-10">
+        <h2 className="text-lg font-medium text-slate-900">
+          Criticality ranking
+        </h2>
+        <p className="mb-5 mt-1 text-sm text-slate-600">
+          Every machine scored by how many others stop if it fails. Highest
+          first.
+        </p>
+        <CriticalityTable onSelect={setSelectedId} />
+      </section>
+
+      <section className="mt-14 border-t border-slate-200 pt-10">
+        <h2 className="text-lg font-medium text-slate-900">Shared parts</h2>
+        <p className="mb-5 mt-1 text-sm text-slate-600">
+          Parts fitted to more than one machine. One failed part can stop
+          several machines at once, so these are the ones worth stocking.
+        </p>
+        <SharedParts />
+      </section>
     </main>
   );
 }

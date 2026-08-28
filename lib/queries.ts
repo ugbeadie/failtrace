@@ -14,13 +14,16 @@ const MAX_DEPTH = 10;
 export async function listEquipment(): Promise<Equipment[]> {
   const { records } = await getDriver().executeQuery(
     `MATCH (e:Equipment)
-     RETURN e.id AS id, e.name AS name, e.location AS location
-     ORDER BY e.location, e.name`,
+     OPTIONAL MATCH (e)-[:FEEDS*1..10]->(d:Equipment)
+     WITH e, count(DISTINCT d) AS impact
+     RETURN e.id AS id, e.name AS name, e.location AS location, impact
+     ORDER BY e.location, impact DESC, e.name`,
   );
   return records.map((r) => ({
     id: r.get("id"),
     name: r.get("name"),
     location: r.get("location"),
+    impact: r.get("impact").toNumber(),
   }));
 }
 
