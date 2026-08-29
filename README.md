@@ -6,7 +6,7 @@ Pick a machine and Failtrace tells you what else stops running, how many steps a
 
 Built for the Wexa AI CognoDB take-home assignment.
 
-**Live demo:** _<add your Vercel URL here>_
+**Live demo:** [_<add your Vercel URL here>_](https://failtrace-livid.vercel.app/)
 **Screen recording:** _<add your link here>_
 
 ---
